@@ -90,7 +90,7 @@ export class VkService {
         this.logger.error('Ошибка обновления токена VK', response.data.error);
         return false;
       }
-      this.token = response.data.access_token;
+      this.access_token = response.data.access_token;
       // Сохрани accessToken для использования
       // ...
       this.logger.log('Обновлен токен VK', response.data);
@@ -103,8 +103,9 @@ export class VkService {
       return true;
     } catch (error) {
       this.logger.error('Ошибка обновления токена VK', error);
-      return
-
+      return false;
+    }
+  }
   private async checkTokenValidity(): Promise<boolean> {
     try {
       const response = await this.vkApi.get('/users.get');
