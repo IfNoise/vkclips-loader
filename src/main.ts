@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
   });
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('vkloader/api');
   const options = new DocumentBuilder()
     .setTitle('VK Publish Service')
     .setDescription('Short video VK publishing Restful API service')
