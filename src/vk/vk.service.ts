@@ -33,7 +33,7 @@ export class VkService {
       const clientSecret = this.configService.get<string>('VK_CLIENT_SECRET');
       const redirectUri = 'http://localhost:3001';
 
-      const response = await axios.post('https://id.vk.com/oauth/token', {
+      const response = await axios.post('https://id.vk.com/oauth2/auth', {
         grant_type: 'authorization_code',
         client_id: clientId,
         client_secret: clientSecret,
