@@ -14,7 +14,7 @@ export class VkController {
     const success = await this.vkService.getAccessToken(code);
     if (success) {
       return res.redirect('http://localhost:3001'); // или куда нужно
-    } else return res.redirect('/'); // или куда нужно
+    } else return { success: false }; // или куда нужно
   }
   // @Post('login')
   // async login(@Body() body) {
