@@ -6,12 +6,14 @@ import axios, { AxiosError, AxiosInstance } from 'axios';
 @Injectable()
 export class VkService {
   private readonly vkApi: AxiosInstance;
-  private token: string;
+  private access_token: string;
+  private refresh_token: string;
+  private deviceId: string;
   private twoFactorCode: string;
   private tokenRefreshTimeout: NodeJS.Timeout;
   private readonly logger = new Logger(VkService.name);
   constructor(private configService: ConfigService) {
-    this.token = this.configService.get<string>('VK_TOKEN');
+    this.access_token = this.configService.get<string>('VK_TOKEN');
 
     // this.checkTokenValidity().then((isValid) => {
     //   if (!isValid) {
@@ -21,21 +23,26 @@ export class VkService {
     this.vkApi = axios.create({
       baseURL: 'https://api.vk.com/method',
       params: {
-        access_token: this.token,
+        access_token: this.access_token,
         v: '5.131',
       },
     });
   }
-  async getAccessToken(code: string): Promise<boolean> {
+  async getAccessToken(
+    code: string,
+    deviceId: string,
+    expiresIn: string,
+  ): Promise<boolean> {
     try {
       this.logger.log('Получаю токен VK');
       const clientId = this.configService.get<string>('VK_CLIENT_ID');
       const clientSecret = this.configService.get<string>('VK_CLIENT_SECRET');
-      const redirectUri = 'http://localhost:3001';
+      const redirectUri = 'http://localhost:3000';
 
       const response = await axios.post('https://id.vk.com/oauth2/auth', {
         grant_type: 'authorization_code',
         client_id: clientId,
+        device_id: deviceId,
         client_secret: clientSecret,
         redirect_uri: redirectUri,
         code: code,
@@ -48,17 +55,55 @@ export class VkService {
         );
         throw new AxiosError(response.data.error.message);
       }
-      this.token = response.data.access_token;
+      this.access_token = response.data.access_token;
+      this.refresh_token = response.data.refresh_token;
       // Сохрани accessToken для использования
       // ...
       this.logger.log('Получен токен VK', response.data);
-
+      this.tokenRefreshTimeout = setTimeout(
+        () => {
+          this.refreshToken();
+        },
+        parseInt(response.data.expires_in) * 1000,
+      );
       return true;
     } catch (error) {
       this.logger.error('Ошибка получения токена VK', error);
       return false;
     }
   }
+  private async refreshToken(): Promise<boolean> {
+    try {
+      this.logger.log('Обновляю токен VK');
+      const clientId = this.configService.get<string>('VK_CLIENT_ID');
+      const clientSecret = this.configService.get<string>('VK_CLIENT_SECRET');
+      const redirectUri = 'http://localhost:3001';
+
+      const response = await axios.post('https://id.vk.com/oauth2/token', {
+        grant_type: 'refresh_token',
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        refresh_token: this.atoken,
+      });
+      if (response.data.error) {
+        this.logger.error('Ошибка обновления токена VK', response.data.error);
+        return false;
+      }
+      this.token = response.data.access_token;
+      // Сохрани accessToken для использования
+      // ...
+      this.logger.log('Обновлен токен VK', response.data);
+      this.tokenRefreshTimeout = setTimeout(
+        () => {
+          this.refreshToken();
+        },
+        parseInt(response.data.expires_in) * 1000,
+      );
+      return true;
+    } catch (error) {
+      this.logger.error('Ошибка обновления токена VK', error);
+      return
 
   private async checkTokenValidity(): Promise<boolean> {
     try {

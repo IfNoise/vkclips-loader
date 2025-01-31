@@ -20,11 +20,21 @@ export class VkController {
     return { success: true };
   }
   @Get('callback')
-  async getAccessToken(@Query('code') code: string, @Req() req, @Res() res) {
+  async getAccessToken(
+    @Query('code') code: string,
+    @Query('device_id') deviceId: string,
+    @Query('expires_in') expiresIn: string,
+    @Req() req,
+    @Res() res,
+  ) {
     this.logger.log('Request query', req.query);
-    const success = await this.vkService.getAccessToken(code);
+    const success = await this.vkService.getAccessToken(
+      code,
+      deviceId,
+      expiresIn,
+    );
     if (success) {
-      return res.redirect('http://localhost:3001'); // или куда нужно
+      return res.redirect('http://localhost:3000'); // или куда нужно
     } else return { success: false }; // или куда нужно
   }
   // @Post('login')
