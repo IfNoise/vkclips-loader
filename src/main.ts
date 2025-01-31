@@ -13,7 +13,6 @@ async function bootstrap() {
     .setDescription('Short video VK publishing Restful API service')
     .setVersion('1.0')
     .addTag('vkpublish')
-    .setBasePath('api/swagger/')
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document, {
