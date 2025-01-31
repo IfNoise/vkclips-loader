@@ -37,6 +37,12 @@ export class VkController {
       return res.redirect('http://localhost:3000'); // или куда нужно
     } else return { success: false }; // или куда нужно
   }
+
+  @Get('redirect')
+  async authenticate(@Res() res) {
+    const url = 'localhost:3000'; // или куда нужно
+    return res.redirect(url);
+  }
   // @Post('login')
   // async login(@Body() body) {
   //   const { username, password } = body;

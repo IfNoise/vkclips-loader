@@ -37,7 +37,7 @@ export class VkService {
       this.logger.log('Получаю токен VK');
       const clientId = this.configService.get<string>('VK_CLIENT_ID');
       const clientSecret = this.configService.get<string>('VK_CLIENT_SECRET');
-      const redirectUri = 'http://localhost:3000';
+      const redirectUri = 'https://ddweed.org/vkloader/api/vk/redirect';
 
       const response = await axios.post('https://id.vk.com/oauth2/auth', {
         grant_type: 'authorization_code',
