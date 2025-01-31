@@ -61,7 +61,7 @@ export class VkService {
         },
       });
       if (response.data.error instanceof AxiosError) {
-        throw new AxiosError(response.data.error);
+        throw new AxiosError(response.data.error.message);
       }
       this.token = response.data.access_token;
       // Сохрани accessToken для использования
