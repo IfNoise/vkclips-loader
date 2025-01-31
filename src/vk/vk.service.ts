@@ -2,35 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { readFile, stat } from 'fs/promises';
 import axios, { AxiosError, AxiosInstance } from 'axios';
-import { CallbackService } from 'vk-io';
-import { DirectAuthorization } from '@vk-io/authorization';
 
 @Injectable()
 export class VkService {
   private readonly vkApi: AxiosInstance;
   private token: string;
-  private callbackService: CallbackService;
-  private direct: DirectAuthorization;
   private twoFactorCode: string;
   private tokenRefreshTimeout: NodeJS.Timeout;
   private readonly logger = new Logger(VkService.name);
   constructor(private configService: ConfigService) {
-    this.callbackService = new CallbackService();
-    this.callbackService.onTwoFactor((payload, retry) => {
-      this.logger.log(
-        `Требуется двухфакторная аутентификация: ${JSON.stringify(payload)}`,
-      );
-      // Ожидаем получения кода двухфакторной аутентификации
-      return new Promise<void>((resolve) => {
-        const interval = setInterval(() => {
-          if (this.twoFactorCode) {
-            clearInterval(interval);
-            retry(this.twoFactorCode);
-            resolve();
-          }
-        }, 1000);
-      });
-    });
     this.token = this.configService.get<string>('VK_TOKEN');
 
     // this.checkTokenValidity().then((isValid) => {
@@ -73,38 +53,6 @@ export class VkService {
       this.logger.error('Ошибка получения токена VK', error);
       return false;
     }
-  }
-
-  async login(username: string, password: string): Promise<boolean> {
-    try {
-      const clientId = this.configService.get<string>('VK_CLIENT_ID');
-      const clientSecret = this.configService.get<string>('VK_CLIENT_SECRET');
-
-      if (!clientId || !clientSecret || !username || !password) {
-        this.logger.error('Не указаны необходимые параметры VK');
-        throw new Error('Не указаны необходимые параметры VK');
-      }
-      this.direct = new DirectAuthorization({
-        callbackService: this.callbackService,
-        clientId,
-        clientSecret,
-        scope: 'all',
-        login: username,
-        password,
-        apiVersion: '5.199',
-      });
-      const response = await this.direct.run();
-      this.logger.log('Успешная авторизация VK', response);
-      this.token = response.token;
-      this.vkApi.defaults.params['access_token'] = this.token;
-      return true;
-    } catch (error) {
-      this.logger.error('Ошибка авторизации VK', error);
-      throw new Error('Ошибка авторизации VK');
-    }
-  }
-  setTwoFactorCode(code: string) {
-    this.twoFactorCode = code;
   }
 
   private async checkTokenValidity(): Promise<boolean> {
