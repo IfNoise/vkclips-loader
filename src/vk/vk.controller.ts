@@ -11,9 +11,10 @@ export class VkController {
   }
   @Get('callback')
   async getAccessToken(@Query('code') code: string, @Res() res) {
-    if (await this.vkService.getAccessToken(code))
+    const success = await this.vkService.getAccessToken(code);
+    if (success) {
       return res.redirect('/'); // или куда нужно
-    else return res.redirect('/login'); // или куда нужно
+    } else return res.redirect('http://localhost:3001'); // или куда нужно
   }
   @Post('login')
   async login(@Body() body) {

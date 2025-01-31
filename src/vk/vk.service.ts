@@ -66,6 +66,7 @@ export class VkService {
       this.token = response.data.access_token;
       // Сохрани accessToken для использования
       // ...
+      this.logger.log('Получен токен VK', response.data);
 
       return true;
     } catch (error) {
