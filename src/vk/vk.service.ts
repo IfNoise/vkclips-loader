@@ -28,6 +28,7 @@ export class VkService {
   }
   async getAccessToken(code: string): Promise<boolean> {
     try {
+      this.logger.log('Получаю токен VK');
       const clientId = this.configService.get<string>('VK_CLIENT_ID');
       const clientSecret = this.configService.get<string>('VK_CLIENT_SECRET');
       const redirectUri = 'http://localhost:3001';
@@ -41,6 +42,10 @@ export class VkService {
       });
       if (response.data.error instanceof AxiosError) {
         this.logger.error('Ошибка получения токена VK', response.data);
+        this.logger.error(
+          'Ошибка получения токена VK',
+          response.data.error.message,
+        );
         throw new AxiosError(response.data.error.message);
       }
       this.token = response.data.access_token;
