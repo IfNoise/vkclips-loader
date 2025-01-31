@@ -7,7 +7,7 @@ export class VkController {
 
   @Get('test')
   test() {
-    return this.vkService.testAuth();
+    return { success: true };
   }
   @Get('callback')
   async getAccessToken(@Query('code') code: string, @Res() res) {
