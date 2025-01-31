@@ -84,7 +84,7 @@ export class VkService {
         client_id: clientId,
         client_secret: clientSecret,
         redirect_uri: redirectUri,
-        refresh_token: this.atoken,
+        refresh_token: this.refreshToken,
       });
       if (response.data.error) {
         this.logger.error('Ошибка обновления токена VK', response.data.error);
