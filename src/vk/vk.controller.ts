@@ -9,6 +9,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { VkService } from './vk.service';
+import { Cookies } from './decorator/coockie.decorator';
 
 @Controller('vk')
 export class VkController {
@@ -24,6 +25,7 @@ export class VkController {
     @Query('code') code: string,
     @Query('device_id') deviceId: string,
     @Query('expires_in') expiresIn: string,
+    @Cookies('vk_code_verifier') codeVerifier: string,
     @Req() req,
     @Res() res,
   ) {
@@ -32,6 +34,7 @@ export class VkController {
       code,
       deviceId,
       expiresIn,
+      codeVerifier,
     );
     if (success) {
       return res.redirect('http://localhost:3000'); // или куда нужно

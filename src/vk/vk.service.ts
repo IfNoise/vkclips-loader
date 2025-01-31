@@ -32,6 +32,7 @@ export class VkService {
     code: string,
     deviceId: string,
     expiresIn: string,
+    codeVerifier: string,
   ): Promise<boolean> {
     try {
       this.logger.log('Получаю токен VK');
@@ -43,6 +44,7 @@ export class VkService {
         grant_type: 'authorization_code',
         client_id: clientId,
         device_id: deviceId,
+        code_verifier: codeVerifier,
         client_secret: clientSecret,
         redirect_uri: redirectUri,
         code: code,
