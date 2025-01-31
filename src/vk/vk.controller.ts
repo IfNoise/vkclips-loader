@@ -30,6 +30,7 @@ export class VkController {
     @Res() res,
   ) {
     this.logger.log('Request query', req.query);
+    this.logger.log('Request cookies', req.cookies);
     const success = await this.vkService.getAccessToken(
       code,
       deviceId,
