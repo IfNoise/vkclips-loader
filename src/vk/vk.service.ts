@@ -52,15 +52,15 @@ export class VkService {
       const clientSecret = this.configService.get<string>('VK_CLIENT_SECRET');
       const redirectUri = 'http://localhost:3001';
 
-      const response = await axios.get('https://oauth.vk.com/access_token', {
-        params: {
-          client_id: clientId,
-          client_secret: clientSecret,
-          redirect_uri: redirectUri,
-          code: code,
-        },
+      const response = await axios.post('https://id.vk.com/oauth/token', {
+        grant_type: 'authorization_code',
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        code: code,
       });
       if (response.data.error instanceof AxiosError) {
+        this.logger.error('Ошибка получения токена VK', response.data.error);
         throw new AxiosError(response.data.error.message);
       }
       this.token = response.data.access_token;
