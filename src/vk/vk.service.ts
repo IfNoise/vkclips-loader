@@ -60,7 +60,7 @@ export class VkService {
         code: code,
       });
       if (response.data.error instanceof AxiosError) {
-        this.logger.error('Ошибка получения токена VK', response.data.error);
+        this.logger.error('Ошибка получения токена VK', response.data);
         throw new AxiosError(response.data.error.message);
       }
       this.token = response.data.access_token;
