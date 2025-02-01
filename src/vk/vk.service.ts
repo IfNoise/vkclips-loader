@@ -36,11 +36,7 @@ export class VkService {
     }
     this.codeVerifier = codeVerifier;
   }
-  async getAccessToken(
-    code: string,
-    deviceId: string,
-    codeVerifier: string,
-  ): Promise<boolean> {
+  async getAccessToken(code: string, deviceId: string): Promise<boolean> {
     try {
       this.logger.log('Получаю токен VK');
       const clientId = this.configService.get<string>('VK_CLIENT_ID');
@@ -51,7 +47,7 @@ export class VkService {
         grant_type: 'authorization_code',
         client_id: clientId,
         device_id: deviceId,
-        code_verifier: codeVerifier,
+        code_verifier: this.codeVerifier,
         client_secret: clientSecret,
         redirect_uri: redirectUri,
         code: code,
