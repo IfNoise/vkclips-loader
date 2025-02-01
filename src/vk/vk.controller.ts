@@ -9,7 +9,6 @@ import {
   Res,
 } from '@nestjs/common';
 import { VkService } from './vk.service';
-import { Cookies } from './decorator/coockie.decorator';
 
 @Controller('vk')
 export class VkController {
@@ -25,7 +24,6 @@ export class VkController {
     @Query('code') code: string,
     @Query('device_id') deviceId: string,
     @Query('expires_in') expiresIn: string,
-    @Cookies('vk_code_verifier') codeVerifier: string,
     @Req() req,
     @Res() res,
   ) {
@@ -35,7 +33,6 @@ export class VkController {
       code,
       deviceId,
       expiresIn,
-      codeVerifier,
     );
     if (success) {
       return res.redirect('http://localhost:3000'); // или куда нужно
@@ -47,20 +44,11 @@ export class VkController {
     const url = 'localhost:3000'; // или куда нужно
     return res.redirect(url);
   }
-  // @Post('login')
-  // async login(@Body() body) {
-  //   const { username, password } = body;
-  //   if (this.vkService.login(username, password))
-  //     return { twoFactorRequired: true };
-  // }
-  // @Post('twofactor')
-  // async checkTwoFactor(@Body() body) {
-  //   const { twoFactorCode } = body;
-  //   this.vkService.setTwoFactorCode(twoFactorCode);
-  //   return { success: true };
-  //   // Если код верный, возвращай:
-  //   // return { success: true };
-  //   // Если нет:
-  //   // return { success: false };
-  // }
+
+  @Post('verifer')
+  async setCodeVerifier(@Body() body) {
+    const { codeVerifier } = body;
+    this.vkService.setCodeVerifier(codeVerifier);
+    return { success: true };
+  }
 }

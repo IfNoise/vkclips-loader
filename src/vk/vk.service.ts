@@ -8,6 +8,7 @@ export class VkService {
   private readonly vkApi: AxiosInstance;
   private access_token: string;
   private refresh_token: string;
+  private codeVerifier: string;
   private deviceId: string;
   private twoFactorCode: string;
   private tokenRefreshTimeout: NodeJS.Timeout;
@@ -28,10 +29,16 @@ export class VkService {
       },
     });
   }
+  setCodeVerifier(codeVerifier: string) {
+    if (!codeVerifier) {
+      this.logger.error('Не указан codeVerifier');
+      throw new Error('Не указан codeVerifier');
+    }
+    this.codeVerifier = codeVerifier;
+  }
   async getAccessToken(
     code: string,
     deviceId: string,
-    expiresIn: string,
     codeVerifier: string,
   ): Promise<boolean> {
     try {
