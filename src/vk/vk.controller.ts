@@ -29,11 +29,7 @@ export class VkController {
   ) {
     this.logger.log('Request query', req.query);
     this.logger.log('Request cookies', req.cookies);
-    const success = await this.vkService.getAccessToken(
-      code,
-      deviceId,
-      expiresIn,
-    );
+    const success = await this.vkService.getAccessToken(code, deviceId);
     if (success) {
       return res.redirect('http://localhost:3000'); // или куда нужно
     } else return { success: false }; // или куда нужно
