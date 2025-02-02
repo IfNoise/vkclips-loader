@@ -121,7 +121,7 @@ export class VideoService {
       if (file.endsWith('.mp4')) {
         const fileStat = fs.statSync(`${this.archiveDir}/${file}`);
         const fileName = file.replace('.mp4', '');
-        if (!fs.existsSync(`${this.archiveDir}/thumbnails/${fileName}.png`)) {
+        if (!fs.existsSync(`${this.archiveDir}/thumbnails/${fileName}.jpg`)) {
           child_process.exec(
             `
             ffmpeg -itsoffset -1 -i "${this.archiveDir}/${file}" -vframes 1  -qscale:v 5 -filter:v scale='min(720\\, iw):-1' "${process.cwd()}/uploads/thumbnails/${fileName}.jpg"
