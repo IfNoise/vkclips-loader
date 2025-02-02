@@ -21,10 +21,11 @@ export class VkService {
     //     this.authenticate();
     //   }
     // });
+    const clientId = this.configService.get<string>('VK_CLIENT_ID');
     this.vkApi = axios.create({
       baseURL: 'https://api.vk.com/method',
       params: {
-        v: '5.129',
+        v: '5.131',
       },
     });
   }
@@ -61,15 +62,8 @@ export class VkService {
       }
       this.access_token = response.data.access_token;
       this.configService.set('VK_ACCESS_TOKEN', this.access_token);
-      this.logger.log(
-        'Установлен токен VK',
-        this.configService.get('VK_ACCESS_TOKEN'),
-      );
-      this.vkApi.defaults.params.access_token = this.access_token;
+      this.configService.set('VK_REFRESH_TOKEN', response.data.refresh_token);
       this.refresh_token = response.data.refresh_token;
-      // Сохрани accessToken для использования
-      // ...
-      this.logger.log('Получен токен VK', response.data);
       this.tokenRefreshTimeout = setTimeout(
         () => {
           this.refreshToken();
@@ -88,6 +82,12 @@ export class VkService {
       const clientId = this.configService.get<string>('VK_CLIENT_ID');
       const clientSecret = this.configService.get<string>('VK_CLIENT_SECRET');
       const redirectUri = 'http://localhost:3001';
+      this.refresh_token = this.configService.get<string>('VK_REFRESH_TOKEN');
+      if (!this.refresh_token) {
+        this.logger.error('Не указан refresh_token');
+        return false;
+      }
+      this.access_token = this.configService.get<string>('VK_ACCESS_TOKEN');
 
       const response = await axios.post('https://id.vk.com/oauth2/token', {
         grant_type: 'refresh_token',
@@ -189,9 +189,12 @@ export class VkService {
         this.logger.error('Не указан access_token');
         throw new Error('Не указан access_token');
       }
+      this.vkApi.defaults.params = {
+        access_token: this.access_token,
+        v: '5.131',
+      };
       const response = await this.vkApi.post('/shortVideo.create', null, {
         params: {
-          access_token: this.access_token,
           file_size: fileSize,
           wallpost,
           description,
