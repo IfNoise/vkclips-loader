@@ -17,18 +17,18 @@ import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule,
-    // TelegrafModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: async (configService: ConfigService) => ({
-    //     token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
-    //     options: {
-    //       handlerTimeout: 60000,
-    //     },
+    TelegrafModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
+        options: {
+          handlerTimeout: 60000,
+        },
 
-    //     include: [TelegramModule],
-    //   }),
-    // }),
+        include: [TelegramModule],
+      }),
+    }),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'sqlite',

@@ -13,20 +13,20 @@ export class TelegramService implements OnModuleDestroy {
   private readonly logger = new Logger(TelegramService.name);
   private readonly configService = new ConfigService();
   constructor(
-    //@InjectBot() private bot: Telegraf<Context>,
+    @InjectBot() private bot: Telegraf<Context>,
     private readonly instagramService: InstagramService,
   ) {
-    // this.bot.use((ctx, next) => {
-    //   this.logger.debug('Context', ctx.message);
-    //   return next();
-    // });
+    this.bot.use((ctx, next) => {
+      this.logger.debug('Context', ctx.message);
+      return next();
+    });
     this.logger.log('Telegram service initialized');
   }
 
   @Start()
   async onStart(@Ctx() ctx: Context) {
-    // const name = (await this.bot.telegram.getMe()).username;
-    await ctx.reply(`Hello! I'm `);
+    const name = (await this.bot.telegram.getMe()).username;
+    await ctx.reply(`Hello! I'm ${name}.`);
   }
 
   @Command('setdescription')
@@ -70,9 +70,9 @@ export class TelegramService implements OnModuleDestroy {
 
   async onModuleDestroy() {
     this.logger.log('Stopping Telegram bot...');
-    // if (this.bot) {
-    //   await this.bot.stop();
-    //   this.logger.log('Telegram bot stopped');
-    // }
+    if (this.bot) {
+      this.bot.stop('SIGINT');
+      this.logger.log('Telegram bot stopped');
+    }
   }
 }

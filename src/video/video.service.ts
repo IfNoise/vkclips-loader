@@ -5,7 +5,7 @@ import { Video } from './entity/video.entity';
 import { VideoUpdateDto } from './dto/video_update.dto';
 import * as fs from 'fs';
 import * as child_process from 'child_process';
-import { Pagination, PaginationOptionsInterface } from 'src/pagination';
+import { Pagination } from 'src/pagination';
 import { ConfigService } from 'src/config/config.service';
 @Injectable()
 export class VideoService {
