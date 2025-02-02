@@ -100,7 +100,10 @@ export class VkService {
         return false;
       }
       this.access_token = response.data.access_token;
+      this.refresh_token = response.data.refresh_token;
       // Сохрани accessToken для использования
+      this.configService.set('VK_ACCESS_TOKEN', this.access_token);
+      this.configService.set('VK_REFRESH_TOKEN', this.refresh_token);
       // ...
       this.logger.log('Обновлен токен VK', response.data);
       this.tokenRefreshTimeout = setTimeout(
