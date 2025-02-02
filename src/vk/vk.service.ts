@@ -21,7 +21,6 @@ export class VkService {
     //     this.authenticate();
     //   }
     // });
-    const clientId = this.configService.get<string>('VK_CLIENT_ID');
     this.vkApi = axios.create({
       baseURL: 'https://api.vk.com/method',
       params: {

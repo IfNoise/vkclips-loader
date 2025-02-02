@@ -156,31 +156,36 @@ export class PublishService {
       0,
       Math.min(videos.length, schedules.length),
     );
-    const publishedVideos = schedules.map(async (schedule, index) => {
-      if (!videosToPublish[index]) return null;
+    const publishedVideos: Video[] = [];
 
+    for (let index = 0; index < schedules.length; index++) {
       const video = videosToPublish[index];
+      if (!video) continue;
+
       this.logger.log(
-        `Publishing video ${video.id} at ${new Date(schedule * 1000).toLocaleString()}`,
+        `Publishing video ${video.id} at ${new Date(schedules[index] * 1000).toLocaleString()}`,
       );
 
       const result = await this.vkService.uploadVideo(
         video.file_path,
-        schedule,
+        schedules[index],
       );
+
+      // Задержка 1 секунда между запросами
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
       if (result) {
         this.logger.log(`Video ${video.id} published`);
-        return await this.videoService.puplishVideo(video.id);
+        const publishedVideo = await this.videoService.puplishVideo(video.id);
+        if (publishedVideo) {
+          publishedVideos.push(publishedVideo);
+        }
+      } else {
+        this.logger.error(`Failed to publish video ${video.id}`);
       }
+    }
 
-      this.logger.error(`Failed to publish video ${video.id}`);
-      return null;
-    });
-
-    return (await Promise.all(publishedVideos)).filter(
-      (video): video is Video => video !== null,
-    );
+    return publishedVideos;
   }
 
   async createTimezone(
