@@ -124,7 +124,7 @@ export class VideoService {
         if (!fs.existsSync(`${this.archiveDir}/thumbnails/${fileName}.png`)) {
           child_process.exec(
             `
-            ffmpeg -itsoffset -1 -i "${this.archiveDir}/${file}" -vframes 1 -filter:v scale='min(720\\, iw):-1' "${process.cwd()}/uploads/thumbnails/${fileName}.png"
+            ffmpeg -itsoffset -1 -i "${this.archiveDir}/${file}" -vframes 1  -qscale:v -filter:v scale='min(720\\, iw):-1' "${process.cwd()}/uploads/thumbnails/${fileName}.jpg"
             `,
             (err, stdout) => {
               if (err) {
