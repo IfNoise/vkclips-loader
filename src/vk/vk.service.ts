@@ -60,7 +60,11 @@ export class VkService {
         throw new AxiosError(response.data.error.message);
       }
       this.access_token = response.data.access_token;
-      this.logger.log('Установлен токен VK', this.access_token);
+      this.configService.set('VK_ACCESS_TOKEN', this.access_token);
+      this.logger.log(
+        'Установлен токен VK',
+        this.configService.get('VK_ACCESS_TOKEN'),
+      );
       this.vkApi.defaults.params.access_token = this.access_token;
       this.refresh_token = response.data.refresh_token;
       // Сохрани accessToken для использования
@@ -176,7 +180,11 @@ export class VkService {
           publish_date: publishDate || new Date().getMilliseconds() / 1000,
         })}`,
       );
-      this.logger.log('Access token:', this.access_token);
+      this.access_token = this.configService.get('VK_ACCESS_TOKEN');
+      this.logger.log(
+        'Access token:',
+        this.configService.get('VK_ACCESS_TOKEN'),
+      );
       if (!this.access_token) {
         this.logger.error('Не указан access_token');
         throw new Error('Не указан access_token');
