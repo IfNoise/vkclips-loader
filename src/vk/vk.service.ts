@@ -178,6 +178,7 @@ export class VkService {
       );
       const response = await this.vkApi.post('/shortVideo.create', null, {
         params: {
+          access_token: this.access_token,
           file_size: fileSize,
           wallpost,
           description,
