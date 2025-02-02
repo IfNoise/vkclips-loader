@@ -137,7 +137,7 @@ export class VideoService {
         await this.saveVideoInfo(
           `file://${this.archiveDir}/${file}`,
           `${this.archiveDir}/${file}`,
-          `thumbnails/${fileName}.png`,
+          `thumbnails/${fileName}.jpg`,
           'archived',
           0,
           0,
