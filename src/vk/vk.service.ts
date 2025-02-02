@@ -24,7 +24,7 @@ export class VkService {
     this.vkApi = axios.create({
       baseURL: 'https://api.vk.com/method',
       params: {
-        v: '5.131',
+        v: '5.129',
       },
     });
   }
