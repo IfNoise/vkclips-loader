@@ -24,7 +24,6 @@ export class VkService {
     this.vkApi = axios.create({
       baseURL: 'https://api.vk.com/method',
       params: {
-        access_token: this.access_token,
         v: '5.131',
       },
     });
@@ -176,6 +175,11 @@ export class VkService {
           publish_date: publishDate || new Date().getMilliseconds() / 1000,
         })}`,
       );
+      this.logger.log('Access token:', this.access_token);
+      if (!this.access_token) {
+        this.logger.error('Не указан access_token');
+        throw new Error('Не указан access_token');
+      }
       const response = await this.vkApi.post('/shortVideo.create', null, {
         params: {
           access_token: this.access_token,
